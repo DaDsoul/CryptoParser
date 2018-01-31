@@ -490,7 +490,7 @@ if (catVal[value.source] != "") {
       } 
       
       else if (element.source == "forklog"){
-          
+          try{
           const $ = cheerio.load(b)
           var elspar = ""
           var els = $("section[id]").find("p")
@@ -498,6 +498,9 @@ if (catVal[value.source] != "") {
             elspar += $(value).text() + '\n'
               })
           element.textHref = elspar
+          }catch(e){
+            console.log("Forklog_Problems")
+          }
           
       }
 	   
