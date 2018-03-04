@@ -158,7 +158,8 @@ app.all("/stata", (req,res) => {
                 
                 value = value.toLowerCase()
                 value = value.replace(" ","-")
-                firebase.database().ref().child("NewStatistics").child(counterCrypto).child("picture").set("https://coincap.io/images/coins/" +  value.toLowerCase + ".png")
+                var valueLowerCase = value.toLowerCase
+                firebase.database().ref().child("NewStatistics").child(counterCrypto).child("picture").set("https://coincap.io/images/coins/" +  valueLowerCase + ".png")
 
               } 
               break 
