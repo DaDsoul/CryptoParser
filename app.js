@@ -5,6 +5,7 @@ const cheerio = require('cheerio')
 var dateFormat = require('dateformat')
 
 const app = express()
+     let element = {}
 
 firebase.initializeApp({
 	serviceAccount: "./Tsepochka-125959916519.json",
@@ -169,22 +170,27 @@ app.all("/stata", (req,res) => {
               break
             case "mktcap":
              if (value){
-                //var element = parseFloat(value)
                 firebase.database().ref().child("NewStatistics").child(counterCrypto).child("market").set(value)
              } 
               break
             case "short":
               if (value){
                   firebase.database().ref().child("NewStatistics").child(counterCrypto).child(key).set(value)
-        
               }
               break
+            
+            case "cap24hrChange":
+            if (value){
+                 firebase.database().ref().child("NewStatistics").child(counterCrypto + 1).child("cap24hrChange").set(value)
+            }
            
             default:
           }
         }
         
        firebase.database().ref().child("NewStatistics").child("50").remove()
+       firebase.database().ref().child("NewStatistics").child("-1").remove()
+
 
       })
   })
@@ -491,10 +497,10 @@ if (catVal[value.source] != "") {
       
       else if (element.source == "forklog"){
           try{
-          const $ = cheerio.load(b)
-          var elspar = ""
-          var els = $("section[id]").find("p")
-          els.each((i,value) => {
+            const $ = cheerio.load(b)
+            var elspar = ""
+            var els = $("section[id]").find("p")
+            els.each((i,value) => {
             elspar += $(value).text() + '\n'
               })
           element.textHref = elspar
@@ -503,8 +509,7 @@ if (catVal[value.source] != "") {
           }
           
       }
-	   
-	  
+	     
 		  firebase.database().ref().child('news').child(catVal.name).child(lastIndex).set(element)
 		  lastIndex = lastIndex + 1
 		  if (element.source == "forklog"){
@@ -528,6 +533,25 @@ if (catVal[value.source] != "") {
 
 var port = process.env.PORT || 5000;
 
+app.all("/deleteDublicates", (req,res) => {
+  var base = firebase.database().ref().child('news')
+  var index = 0
+
+  base.on("child_added", function(snapshot, prevChildKey) {
+    var newPost = snapshot.val();
+      newPost.forEach((catVal, catIndex) => {
+          console.log(catVal)
+          console.log("---------")
+  })
+})
+
+
+
+//          firebase.database().ref().child("newsWithoutDublicates").child(catIndex).push(mySet)
+
+
+})
+
 app.listen(port, function() {
   console.log("Listening on " + port);
 });
@@ -538,3 +562,4 @@ String.prototype.insert = function (index, string) {
   else
     return string + this
 }
+
